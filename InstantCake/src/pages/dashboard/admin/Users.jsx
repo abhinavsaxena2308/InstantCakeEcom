@@ -1,17 +1,31 @@
-import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import { FaTrashAlt, FaUser, FaUsers } from "react-icons/fa";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const Users = () => {
+  const axiosSecure = useAxiosSecure();
   const { refetch, data: users = [] } = useQuery({
-        queryKey: ['users'],
-        queryFn: async () => {
-            const res = await fetch(`http://localhost:3000/users`)
-            return res.json();
-        },
-    })
+    queryKey: ["users"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/users");
+      return res.data;
+    },
+  });
+  // console.log(users);
+  const handleMakeAdmin = (user) => {
+    axiosSecure.patch(`/users/admin/${user._id}`).then((res) => {
+      alert(`${user.name} is now admin`);
+      refetch();
+    });
+  };
 
-    console.log(users)
+  const handleDeleteUser = user => {
+    axiosSecure.delete(`/users/${user._id}`).then(res => {
+      alert(`${user.name} is removed from database`);
+      refetch();
+    })
+  }
   return (
     <div>
       <div className="flex items-center justify-between m-4">
@@ -64,7 +78,6 @@ const Users = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Users
-
+export default Users;

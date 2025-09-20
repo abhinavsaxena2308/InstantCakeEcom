@@ -29,6 +29,11 @@ mongoose
     res.send({token});
   })
 
+// app.post("/users", (req, res) => {
+//   const { name, email } = req.body;
+//   console.log("New user:", name, email);
+//   res.status(201).json({ success: true });
+// });
 
 //   import routes here
 const menuRoutes = require('./api/routes/menuRoutes');

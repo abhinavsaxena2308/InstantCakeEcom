@@ -12,7 +12,7 @@ const getAllUsers = async (req, res) => {
 
 // post a new user
 const createUser = async (req, res) => {
-  const user = req.body;
+  const user = req.params;
   const query = { email: user.email };
   try {
     const existingUser = await User.findOne(query);
@@ -65,7 +65,7 @@ const getAdmin = async (req, res) => {
 // make admin of a user
 const makeAdmin = async (req, res) => {
     const userId = req.params.id;
-    const {name, email, photoURL, role} = req.body;
+    const {name, email, photoURL, role} = req.params;
     try {
         const updatedUser = await User.findByIdAndUpdate(
             userId, 

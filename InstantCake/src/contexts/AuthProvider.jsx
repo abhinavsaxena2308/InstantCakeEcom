@@ -1,85 +1,127 @@
-import React, { createContext, useEffect, useState } from 'react'
-import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
-import app from "../firebase/firebase.config"
-import axios from 'axios';
+import React, { createContext, useEffect, useState } from 'react';
+import {
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
+import app from "../firebase/firebase.config";
+import axios from "axios";
 
 export const AuthContext = createContext();
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-const AuthProvider = ({children}) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    // create an account
-    const createUser = (email, password) => {
-        setLoading(true);
-        return createUserWithEmailAndPassword(auth, email, password)
+  // Create a new account
+  const createUser = async (email, password) => {
+    setLoading(true);
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      return result;
+    } catch (error) {
+      console.error("Firebase Signup Error:", error.code, error.message);
+      throw error;
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // signup with gmail
-    const signUpWithGmail = () => {
+  // Signup / login with Google
+  const signUpWithGmail = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      return result;
+    } catch (error) {
+      console.error("Google Signup Error:", error.code, error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Login with email & password
+  const login = async (email, password) => {
+    setLoading(true);
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      return result;
+    } catch (error) {
+      console.error("Firebase Login Error:", error.code, error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Logout
+  const logOut = async () => {
+    setLoading(true);
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update profile
+  const updateUserProfile = async (name, photoURL) => {
+    if (!auth.currentUser) return;
+    try {
+      await updateProfile(auth.currentUser, { displayName: name, photoURL });
+    } catch (error) {
+      console.error("Update Profile Error:", error);
+    }
+  };
+
+  // Track signed-in user and get JWT
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
       setLoading(true);
-      return  signInWithPopup(auth, googleProvider)
-    }
 
-    // login using email & password
-    const login = (email, password) => {
-        return signInWithEmailAndPassword(auth, email, password);
-    }
-
-    // logout 
-    const logOut = () =>{
-      return signOut(auth);
-  }
-
-    // update profile
-    const updateUserProfile = (name, photoURL) => {
-      return  updateProfile(auth.currentUser, {
-            displayName: name, photoURL: photoURL
-          })
-    }
-
-    // check signed-in user
-    useEffect( () =>{
-      const unsubscribe = onAuthStateChanged(auth, currentUser =>{
-          // console.log(currentUser);
-          setUser(currentUser);
-          if(currentUser){
-            const userInfo = {email : currentUser.email}
-          axios.post('http://localhost:3000/jwt',userInfo)
-          .then((response)=>{
-            // console.log(response)
-            if(response.data.token){
-              localStorage.setItem("access-token", response.data.token)
-            }
-          })
-          } else{
-            localStorage.removeItem("access-token")
+      if (currentUser) {
+        try {
+          const { data } = await axios.post('http://localhost:3000/jwt', {
+            email: currentUser.email,
+          });
+          if (data?.token) {
+            localStorage.setItem("access-token", data.token);
           }
-          setLoading(false);
-      });
-
-      return () =>{
-          return unsubscribe();
+        } catch (err) {
+          console.error("JWT fetch error:", err);
+        }
+      } else {
+        localStorage.removeItem("access-token");
       }
-  }, [])
 
-    const authInfo = {
-        user,
-        createUser,
-        signUpWithGmail,
-        login,
-        logOut,
-        updateUserProfile,
-        loading
-    }
-  return (
-    <AuthContext.Provider value={authInfo}>
-        {children}
-    </AuthContext.Provider>
-  )
-}
+      setLoading(false);
+    });
 
-export default AuthProvider
+    return unsubscribe;
+  }, []);
+
+  const authInfo = {
+    user,
+    loading,
+    createUser,
+    signUpWithGmail,
+    login,
+    logOut,
+    updateUserProfile,
+  };
+
+  return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>;
+};
+
+export default AuthProvider;

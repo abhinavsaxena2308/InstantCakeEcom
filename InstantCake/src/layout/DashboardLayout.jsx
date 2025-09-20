@@ -2,19 +2,19 @@ import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { MdDashboard, MdDashboardCustomize } from "react-icons/md";
 import {
+  FaEdit,
   FaLocationArrow,
+  FaPlusCircle,
+  FaQuestionCircle,
   FaRegUser,
-  FaCartShopping ,
+  FaShoppingBag,
   FaUser,
-} from "react-icons/fa6";
-import logo from '/logo.png'
-import { FaEdit, FaPlusCircle, FaQuestionCircle, FaShoppingBag} from "react-icons/fa";
-
-// import logo from "/logo.png";
-// import { FaCartShopping } from "react-icons/fa6";
-// import Login from "../components/Login";
-// import useAdmin from "../hooks/useAdmin";
-// import useAuth from "../hooks/useAuth";
+} from "react-icons/fa";
+import useAdmin from "../hooks/useAdmin"
+import useAuth from "../hooks/useAuth"
+import logo from "/logo.png";
+import { FaCartShopping } from "react-icons/fa6";
+import Login from "../components/Login";
 
 const sharedLinks = (
   <>
@@ -36,19 +36,19 @@ const sharedLinks = (
 );
 
 const DashboardLayout = () => {
-  // const {loading} = useAuth()
-  // const [isAdmin, isAdminLoading] = useAdmin()
+  const {loading} = useAuth()
+  const [isAdmin, isAdminLoading] = useAdmin();
   return (
     <div>
-     
-      <div className="drawer sm:drawer-open">
+    {
+      isAdmin ?   <div className="drawer sm:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col sm:items-start sm:justify-start my-2">
         {/* Page content here */}
         <div className="flex items-center justify-between mx-4">
           <label
             htmlFor="my-drawer-2"
-            className="btn bg-green text-white drawer-button lg:hidden"
+            className="btn btn-primary drawer-button lg:hidden"
           >
             <MdDashboardCustomize />
           </label>
@@ -71,7 +71,7 @@ const DashboardLayout = () => {
           <li>
             <Link to="/dashboard" className="flex justify-start mb-3">
               <img src={logo} alt="" className="w-20" />
-              <span className="badge badge-primary bg-yellow-400 text-black">admin</span>
+              <span className="badge badge-primary">admin</span>
             </Link>
           </li>
           <hr />
@@ -111,8 +111,8 @@ const DashboardLayout = () => {
           }
         </ul>
       </div>
-    </div><div className="h-screen flex justify-center items-center"><Link to="/"><button className="btn bg-green text-white">Back to Home</button></Link></div>
-    
+    </div> : <Login/>
+    }
     </div>
   );
 };
