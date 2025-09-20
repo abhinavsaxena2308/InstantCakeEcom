@@ -12,15 +12,15 @@ const getAllUsers = async (req, res) => {
 
 // post a new user
 const createUser = async (req, res) => {
-  const user = req.params;
+  const user = req.body;
   const query = { email: user.email };
   try {
     const existingUser = await User.findOne(query);
     if (existingUser) {
-      return res.status(302).json({ message: "User already exists!" });
+      return res.status(409).json({ message: "User already exists!" });
     }
     const result = await User.create(user);
-    res.status(200).json(result);
+    res.status(201).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -63,25 +63,33 @@ const getAdmin = async (req, res) => {
 };
 
 // make admin of a user
+const mongoose = require("mongoose");
+
 const makeAdmin = async (req, res) => {
     const userId = req.params.id;
-    const {name, email, photoURL, role} = req.params;
+    
+    if(!mongoose.Types.ObjectId.isValid(userId)){
+        return res.status(400).json({message: "Invalid user ID"});
+    }
+
     try {
         const updatedUser = await User.findByIdAndUpdate(
             userId, 
-            {role: "admin"},
-            {new: true, runValidators: true}
+            { role: "admin" },
+            { new: true, runValidators: true }
         );
 
         if(!updatedUser){
-            return res.status(404).json({message: "User not found"})
+            return res.status(404).json({message: "User not found"});
         }
-        res.status(200).json(updatedUser)
+        res.status(200).json(updatedUser);
         
     } catch (error) {
+        console.error("Make Admin Error:", error); // <-- log for debugging
         res.status(500).json({ message: error.message });
     }
-}
+};
+
 
 
 module.exports = {

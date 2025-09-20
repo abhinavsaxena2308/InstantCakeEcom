@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, Outlet } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthProvider";
 import { MdDashboard, MdDashboardCustomize } from "react-icons/md";
 import {
   FaEdit,
@@ -10,11 +11,12 @@ import {
   FaShoppingBag,
   FaUser,
 } from "react-icons/fa";
-import useAdmin from "../hooks/useAdmin"
-import useAuth from "../hooks/useAuth"
+
 import logo from "/logo.png";
 import { FaCartShopping } from "react-icons/fa6";
 import Login from "../components/Login";
+import useAdmin from "../hooks/useAdmin";
+import useAuth from "../hooks/useAuth";
 
 const sharedLinks = (
   <>
@@ -36,8 +38,16 @@ const sharedLinks = (
 );
 
 const DashboardLayout = () => {
+  const {logOut} = useContext(AuthContext)
+  const handleLogout = () => {
+    logOut().then(() => {
+      // Sign-out successful.
+    }).catch((error) => {
+      // An error happened.
+    });
+  }
   const {loading} = useAuth()
-  const [isAdmin, isAdminLoading] = useAdmin();
+  const [isAdmin, isAdminLoading] = useAdmin()
   return (
     <div>
     {
@@ -52,7 +62,7 @@ const DashboardLayout = () => {
           >
             <MdDashboardCustomize />
           </label>
-          <button className="btn rounded-full px-6 bg-green flex items-center gap-2 text-white sm:hidden">
+          <button onClick={handleLogout} className="btn rounded-full px-6 bg-green flex items-center gap-2 text-white sm:hidden">
             <FaRegUser /> Logout
           </button>
         </div>
@@ -111,7 +121,7 @@ const DashboardLayout = () => {
           }
         </ul>
       </div>
-    </div> : <Login/>
+    </div> : (loading ? <Login/> : <div className="h-screen flex justify-center items-center"><Link to="/"><button className="btn bg-green text-white">Back to Home</button></Link></div>)
     }
     </div>
   );

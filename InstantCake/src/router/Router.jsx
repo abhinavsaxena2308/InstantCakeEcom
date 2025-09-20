@@ -10,6 +10,9 @@ import Dashboard from "../pages/dashboard/admin/Dashboard";
 import Users from "../pages/dashboard/admin/Users";
 import PrivateRoute from "../PrivateRouter/PrivateRouter";
 import Login from "../components/Login";
+import AddMenu from "../pages/dashboard/admin/AddMenu";
+import ManageItems from "../pages/dashboard/admin/ManageItems";
+import UpdateMenu from "../pages/dashboard/admin/UpdateMenu";
 
 const router = createBrowserRouter([
   {
@@ -48,12 +51,25 @@ const router = createBrowserRouter([
     element : <PrivateRoute><DashboardLayout/></PrivateRoute>,
     children : [
     {
-      path : "dashbaord",
+      path : "",
       element: <Dashboard/>
     },
     {
       path : "users",
       element: <Users/>
+    },
+    {
+      path: 'add-menu',
+      element: <AddMenu/>
+    },
+    {
+      path: 'manage-items',
+      element: <ManageItems/>
+    },
+    {
+          path: "update-menu/:id",
+          element: <UpdateMenu/>,
+          loader: ({params}) => fetch(`http://localhost:3000/menu/${params.id}`)
     }
   ]
   }

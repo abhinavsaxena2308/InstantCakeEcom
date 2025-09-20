@@ -1,24 +1,23 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 const {Schema} = mongoose;
 
-// create schema object for user
+// schema model
 const userSchema = new Schema({
     name: String,
-    email:{
-        type : String,
+    email: {
+        type: String,
         trim: true,
-        minlength:3
+        minlength: 3
     },
     photoURL: String,
-    role:{
+    role: {
         type: String,
-        enum: ['user','admin'],
-        default:'user'
+       enum: ['user', 'admin'],
+       default: 'user'
     }
 })
 
-//model instance
-
+// create a model instance
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

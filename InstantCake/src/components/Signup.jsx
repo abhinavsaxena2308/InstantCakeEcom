@@ -36,6 +36,13 @@ const Signup = () => {
       navigate(from, { replace: true });
     } catch (error) {
       console.error("Signup Error:", error);
+
+      // Handle duplicate user
+    if (error.response?.status === 409) {
+      setSignupError("User already exists! Please log in.");
+    } else {
+      setSignupError(error?.response?.data?.message || error.message);
+    }
       // Show Firebase or Axios error
       setSignupError(error?.response?.data?.message || error.message);
     }
