@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react";
 import { FaGooglePay } from "react-icons/fa";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const CheckoutForm = ({ price, cart }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-
+  const navigate = useNavigate()
   const [cardError, setCardError] = useState("");
   const [clientSecret, setClientSecret] = useState("");
   const [processing, setProcessing] = useState(false);
@@ -38,6 +39,12 @@ const CheckoutForm = ({ price, cart }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Check if cart is empty
+    if (!cart || cart.length === 0) {
+        alert("Your cart is empty! Please add items to proceed with payment.");
+        return;
+    }
+    
     if (!stripe || !elements) return;
     setProcessing(true);
     setCardError("");
@@ -80,7 +87,7 @@ const CheckoutForm = ({ price, cart }) => {
     } else if (paymentIntent?.status === "succeeded") {
       console.log("✅ Payment successful:", paymentIntent);
       setPaymentSuccess("Payment completed successfully!");
-      alert(`Your TransactionID is ${paymentIntent.id}`);
+      // alert(`Your TransactionID is ${paymentIntent.id}`);
 
       // payments info data
       const paymentInfo = {
@@ -91,9 +98,16 @@ const CheckoutForm = ({ price, cart }) => {
         status: "Order pending",
         itemName: cart.map(item => item.name),
         cartItems: cart.map(item => item._id),
-        menuItems: cart.map(item => item.menuItemId), // ✅ corrected
+        menuItems: cart.map(item => item.menuItemId), 
       };
       console.log(paymentInfo);
+      // send info to backend 
+      axiosSecure.post('/payments' , paymentInfo)
+      .then ( res => {
+        console.log(res.data)
+        alert(`Payment Successful! Your TransactionID is ${paymentIntent.id}`)
+        navigate('/order')
+      })
     }
 
     setProcessing(false);

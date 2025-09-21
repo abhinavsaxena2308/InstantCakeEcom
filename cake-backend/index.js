@@ -39,10 +39,14 @@ mongoose
 //   import routes here
 const menuRoutes = require('./api/routes/menuRoutes');
 const cartRoutes = require('./api/routes/cartRoutes');
-const userRoutes = require('./api/routes/userRoutes')
-app.use('/menu', menuRoutes)
+const userRoutes = require('./api/routes/userRoutes');
+const paymentRoutes = require('./api/routes/paymentRoutes');
+const dashboardRoutes = require("./api/routes/dashboardRoutes");
+app.use("/api", dashboardRoutes);
+app.use('/menu', menuRoutes);
 app.use('/carts', cartRoutes);
 app.use('/users', userRoutes);
+app.use('/payments', paymentRoutes);
 
 //strive payments routes
 

@@ -14,6 +14,8 @@ import AddMenu from "../pages/dashboard/admin/AddMenu";
 import ManageItems from "../pages/dashboard/admin/ManageItems";
 import UpdateMenu from "../pages/dashboard/admin/UpdateMenu";
 import Payment from "../pages/menuPage/Payment";
+import Order from "../pages/dashboard/Order"
+import ManageBookings from "../pages/dashboard/admin/ManageBookings";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "/cart-page",
         element: <CartPage/>
+      },
+      {
+        path: "/order",
+        element: <Order/>
       },
       {
         path: "/update-profile",
@@ -71,6 +77,10 @@ const router = createBrowserRouter([
     {
       path: 'add-menu',
       element: <AddMenu/>
+    },
+    {
+      path: 'manage-bookings',
+      element: <ManageBookings/>
     },
     {
       path: 'manage-items',
