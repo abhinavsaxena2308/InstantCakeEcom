@@ -11,10 +11,10 @@ const Navbar = () => {
   const [isSticky, setSticky] = useState(false);
 
   const {user, loading} = useAuth();
-  console.log(user)
+  // console.log(user)
 
   const [cart , refetch] = useCart();
-  console.log(cart)
+  // console.log(cart)
 
   useEffect(() => {
     const handleScroll = () => {

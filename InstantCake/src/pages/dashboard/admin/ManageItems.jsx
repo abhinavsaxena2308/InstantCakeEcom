@@ -11,7 +11,7 @@ const ManageItems = () => {
 //   console.log(menu);
 
 const handleUpdate = () =>{
-  alert("under process")
+  alert("update page under process")
 }
 
   //   handleDeleteItem
