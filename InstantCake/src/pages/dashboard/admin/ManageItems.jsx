@@ -10,6 +10,10 @@ const ManageItems = () => {
   const axiosSecure = useAxiosSecure();
 //   console.log(menu);
 
+const handleUpdate = () =>{
+  alert("under process")
+}
+
   //   handleDeleteItem
   const handleDeleteItem = (item) => {
     Swal.fire({
@@ -71,11 +75,11 @@ const ManageItems = () => {
                   <td>{item.name}</td>
                   <td>${item.price}</td>
                   <td>
-                    <Link to={`/dashboard/update-menu/${item._id}`}>
-                      <button className="btn btn-ghost btn-xs bg-orange-500 text-white">
+                    {/* <Link to={`/dashboard/update-menu/${item._id}`}> */}
+                      <button onClick={() => handleUpdate()} className="btn btn-ghost btn-xs bg-orange-500 text-white">
                         <FaEdit />
                       </button>
-                    </Link>
+                    {/* </Link> */}
                   </td>
                   <td>
                     <button

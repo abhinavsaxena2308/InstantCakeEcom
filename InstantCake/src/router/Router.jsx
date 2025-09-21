@@ -66,11 +66,11 @@ const router = createBrowserRouter([
       path: 'manage-items',
       element: <ManageItems/>
     },
-    {
-          path: "update-menu/:id",
-          element: <UpdateMenu/>,
-          loader: ({params}) => fetch(`http://localhost:3000/menu/${params.id}`)
-    }
+    // {
+    //       path: "update-menu/:id",
+    //       element: <UpdateMenu/>,
+    //       loader: ({params}) => fetch(`http://localhost:3000/menu/${params.id}`)
+    // }
   ]
   }
 
