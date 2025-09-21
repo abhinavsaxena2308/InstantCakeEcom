@@ -34,30 +34,9 @@ const Dashboard = () => {
 
   return (
     <div className="max-w-screen-2xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Total Orders */}
-        <div className="bg-green text-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold">Total Orders</h2>
-          <p className="text-3xl mt-2">{totalOrders}</p>
-        </div>
-
-        {/* Total Cart Items */}
-        <div className="bg-blue-500 text-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold">Cart Items</h2>
-          <p className="text-3xl mt-2">{totalCartItems}</p>
-        </div>
-
-        {/* Total Spent */}
-        <div className="bg-yellow-500 text-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold">Total Spent</h2>
-          <p className="text-3xl mt-2">${totalSpent.toFixed(2)}</p>
-        </div>
-      </div>
 
       {/* Recent Orders Table */}
-      <div className="mt-12">
+      <div className="">
         <h2 className="text-2xl font-semibold mb-4">Recent Orders</h2>
         <div className="overflow-x-auto">
           <table className="table w-full">
