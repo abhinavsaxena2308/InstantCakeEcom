@@ -39,7 +39,7 @@ const Navbar = () => {
           </summary>
           <ul className="p-2 shadow-lg bg-white text-gray-700 rounded-xl space-y-2 mt-2 border">
             <li>
-              <a className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
+              <a className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300" href="/menu">
                 All
               </a>
             </li>
