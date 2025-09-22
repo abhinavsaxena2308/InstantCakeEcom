@@ -152,13 +152,13 @@ const Login = () => {
             </p>
           </form>
     <div className="text-center space-x-3">
-        <button onClick={handleRegister} className="btn btn-circle hover:bg-green hover:text-white">
+        <button onClick={handleRegister} className="btn btn-circle hover:bg-orange-900 hover:text-white">
           <FaGoogle />
         </button>
-        <button className="btn btn-circle hover:bg-green hover:text-white">
+        <button className="btn btn-circle hover:bg-orange-900 hover:text-white">
           <FaFacebookF />
         </button>
-        <button className="btn btn-circle hover:bg-green hover:text-white">
+        <button className="btn btn-circle hover:bg-orange-900 hover:text-white">
           <FaGithub />
         </button>
       </div>

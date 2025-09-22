@@ -14,7 +14,7 @@ app.use(express.json());
 // mongodb configuration using mongoose
 mongoose
   .connect(
-    `mongodb+srv://instantcake_user:123@instantcake.3db1tyv.mongodb.net/?retryWrites=true&w=majority&appName=instantcake`
+    process.env.MONGO_URI
   )
   .then(
     console.log("MongoDB Connected Successfully!")

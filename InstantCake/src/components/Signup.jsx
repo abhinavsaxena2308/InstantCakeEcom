@@ -134,14 +134,14 @@ const Signup = () => {
         <div className="text-center space-x-3 mt-3">
           <button
             onClick={handleGoogleSignup}
-            className="btn btn-circle hover:bg-green hover:text-white"
+            className="btn btn-circle hover:bg-orange-900 hover:text-white"
           >
             <FaGoogle />
           </button>
-          <button className="btn btn-circle hover:bg-green hover:text-white">
+          <button className="btn btn-circle hover:bg-orange-900 hover:text-white">
             <FaFacebookF />
           </button>
-          <button className="btn btn-circle hover:bg-green hover:text-white">
+          <button className="btn btn-circle hover:bg-orange-900 hover:text-white">
             <FaGithub />
           </button>
         </div>
