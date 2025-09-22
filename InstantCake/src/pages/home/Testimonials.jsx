@@ -14,9 +14,7 @@ const Testimonials = () => {
             <p className="subtitle">Testimonials</p>
             <h2 className="title">What Our Customers Say About Us</h2>
             <blockquote className="my-5 text-secondary leading-[30px]">
-              “I had the pleasure of dining at Foodi last night, and I'm still
-              raving about the experience! The attention to detail in
-              presentation and service was impeccable”
+              "I ordered a Black Forest cake from InstantCake for my parents’ anniversary, and it was simply perfect! 🎂✨ The cake was super fresh, beautifully decorated, and tasted heavenly. What I loved the most was the quick delivery and the care taken in packaging – it arrived just like it was shown on the website. Definitely my go-to place now for all celebrations!"
             </blockquote>
            
            {/* avater */}

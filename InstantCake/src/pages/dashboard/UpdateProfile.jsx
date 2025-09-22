@@ -53,7 +53,7 @@ const UpdateProfile = () => {
           {/* <input type="file" className="file-input w-full max-w-xs" /> */}
         </div>
         <div className="form-control mt-6">
-          <button className="btn bg-green text-white">Update</button>
+          <button className="btn bg-orange-900 text-white">Update</button>
         </div>
       </form>
     </div>

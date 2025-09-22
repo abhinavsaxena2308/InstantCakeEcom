@@ -118,7 +118,7 @@ const Signup = () => {
 
           {/* Submit button */}
           <div className="form-control mt-6">
-            <input type="submit" className="btn bg-green text-white" value="Sign up" />
+            <input type="submit" className="btn bg-orange-900 text-white" value="Sign up" />
           </div>
 
           {/* Login link */}

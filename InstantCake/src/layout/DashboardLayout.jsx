@@ -62,7 +62,7 @@ const DashboardLayout = () => {
           >
             <MdDashboardCustomize />
           </label>
-          <button onClick={handleLogout} className="btn rounded-full px-6 bg-green flex items-center gap-2 text-white sm:hidden">
+          <button onClick={handleLogout} className="btn rounded-full px-6 bg-orange-900 flex items-center gap-2 text-white sm:hidden">
             <FaRegUser /> Logout
           </button>
         </div>
@@ -121,7 +121,7 @@ const DashboardLayout = () => {
           }
         </ul>
       </div>
-    </div> : (loading ? <Login/> : <div className="h-screen flex justify-center items-center"><Link to="/"><button className="btn bg-green text-white">Back to Home</button></Link></div>)
+    </div> : (loading ? <Login/> : <div className="h-screen flex justify-center items-center"><Link to="/"><button className="btn bg-orange-900 text-white">Back to Home</button></Link></div>)
     }
     </div>
   );

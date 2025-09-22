@@ -96,7 +96,7 @@ const SpecialDishes = () => {
         <FaAngleLeft className=" h-8 w-8 p-1"/>
         </button>
         <button
-          className="bg-green btn p-2 rounded-full ml-5"
+          className="bg-orange-900 text-white btn p-2 rounded-full ml-5"
           onClick={() => slider?.current?.slickNext()}
         >
           <FaAngleRight className=" h-8 w-8 p-1"/>

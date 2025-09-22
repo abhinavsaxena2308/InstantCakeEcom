@@ -53,7 +53,7 @@ const Users = () => {
 
       <div className="overflow-x-auto">
         <table className="table table-zebra md:w-[870px]">
-          <thead className="bg-green text-white rounded-lg">
+          <thead className="bg-orange-900 text-white rounded-lg">
             <tr>
               <th>#</th>
               <th>Name</th>
@@ -74,7 +74,7 @@ const Users = () => {
                   ) : (
                     <button
                       onClick={() => handleMakeAdmin(user)}
-                      className="btn btn-xs btn-circle bg-indigo-500 text-white"
+                      className="btn btn-xs btn-circle bg-green text-white"
                     >
                       <FaUsers />
                     </button>

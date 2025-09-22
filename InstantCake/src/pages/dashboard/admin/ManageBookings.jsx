@@ -37,7 +37,9 @@ const Dashboard = () => {
 
       {/* Recent Orders Table */}
       <div className="">
-        <h2 className="text-2xl font-semibold mb-4">Recent Orders</h2>
+        <h2 className="text-2xl font-semibold my-4">
+        Manage All <span className="text-orange-900">Recent Bookings</span>
+      </h2>
         <div className="overflow-x-auto">
           <table className="table w-full">
             <thead>

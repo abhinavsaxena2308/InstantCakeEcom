@@ -19,22 +19,22 @@ const Footer = () => {
         </nav>
         <nav>
           <header className="footer-title">Main Menu</header>
-          <a className="link link-hover">Home</a>
+          <a className="link link-hover" href="/">Home</a>
           <a className="link link-hover">Offers</a>
-          <a className="link link-hover">Menus</a>
+          <a className="link link-hover" href="/menu">Menus</a>
           <a className="link link-hover">Reservation</a>
         </nav>
         <nav>
           <header className="footer-title">Contact Us</header>
-          <a className="link link-hover">example@email.com</a>
-          <a className="link link-hover">+64 958 248 966</a>
+          <a className="link link-hover">abhinav.2025@iic.ac.in</a>
+          <a className="link link-hover">+91 8081542031</a>
           <a className="link link-hover">Social media</a>
         </nav>
       </footer>
         <hr />
       <footer className="footer items-center xl:px-24 px-4 py-4 mt-2">
         <aside className="items-center grid-flow-col">
-          <p>Copyright © 2023 - All right reserved</p>
+          <p>Copyright © 2025 - All right reserved</p>
         </aside>
         <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
           <a>

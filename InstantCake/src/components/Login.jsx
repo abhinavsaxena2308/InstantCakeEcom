@@ -47,8 +47,11 @@ const Login = () => {
         // ...
       })
       .catch((error) => {
-        const errorMessage = error.message;
-        seterrorMessage("Please provide valid email & password!");
+        if (error.response && error.response.status === 409) {
+    alert("User already exists. Please log in instead.");
+  } else {
+    alert("Something went wrong. Try again.");
+  }
       });
       reset()
 
@@ -128,7 +131,7 @@ const Login = () => {
             <div className="form-control mt-4">
               <input
                 type="submit"
-                className="btn bg-green text-white"
+                className="btn bg-orange-900 text-white"
                 value="Login"
               />
             </div>

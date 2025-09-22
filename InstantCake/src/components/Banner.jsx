@@ -11,9 +11,9 @@ const Banner = () => {
           <img src={bannerImg} alt="" />
           <div className="flex flex-col md:flex-row items-center justify-around -mt-14 gap-4">
             <div className="bg-white px-3 py-2 rounded-2xl flex items-center gap-3 shadow-sm w-64">
-              <img src="/images/home/b-food1.png" alt=""  className="rounded-2xl"/>
+              <img src="/images/home/red_velvet.jpg" alt=""  className="rounded-2xl"/>
               <div className="space-y-1">
-                <h5>Spicy noodles</h5>
+                <h5>Red Velvet</h5>
                 <div className="rating rating-sm">
               
                 <input
@@ -48,13 +48,13 @@ const Banner = () => {
                   />
                 
                 </div>
-                <p className="text-red">$18.00</p>
+                <p className="text-red">₹499.0</p>
               </div>
             </div>
             <div className="bg-white px-3 py-2 rounded-2xl md:flex items-center gap-3 shadow-sm w-64 hidden">
-              <img src="/images/home/b-food1.png" alt=""  className="rounded-2xl"/>
+              <img src="/images/home/black_forest.jpg" alt=""  className="rounded-2xl"/>
               <div className="space-y-1">
-                <h5>Spicy noodles</h5>
+                <h5>Black Forest Cake</h5>
                 <div className="rating rating-sm">
                 <input
                     type="radio"
@@ -89,7 +89,7 @@ const Banner = () => {
                   />
                 
                 </div>
-                <p className="text-red">$18.00</p>
+                <p className="text-red">₹399.0</p>
               </div>
             </div>
           </div>
@@ -98,13 +98,13 @@ const Banner = () => {
         {/* texts */}
         <div className="md:w-1/2 px-4 space-y-7">
         <h2 className="md:text-5xl text-4xl font-bold md:leading-snug leading-snug">
-            Dive into Delights Of Delectable <span className="text-green">Food</span>
+            Dive into Delights Of Delectable <span className="text-orange-900">Cakes</span>
           </h2>
           <p className="text-[#4A4A4A] text-xl">
-            Where Each Plate Weaves a Story of Culinary Mastery and Passionate
+            Where Each Cake Weaves a Story of Culinary Mastery and Passionate
             Craftsmanship
           </p>
-          <button className="bg-green font-semibold btn text-white px-8 py-3 rounded-full">
+          <button className="bg-orange-900 font-semibold btn text-white px-8 py-3 rounded-full">
             Order Now
           </button>
         </div>
