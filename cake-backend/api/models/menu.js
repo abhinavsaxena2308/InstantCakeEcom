@@ -16,10 +16,12 @@ const menuSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    }   
 
 })
 
 // create model
-const Menu = mongoose.model("Menu", menuSchema);
+// 👇 Prevent OverwriteModelError
+const Menu = mongoose.models.Menu || mongoose.model("Menu", menuSchema);
+
 module.exports = Menu;
