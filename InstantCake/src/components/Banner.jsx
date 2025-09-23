@@ -1,7 +1,13 @@
 import React from "react";
 import bannerImg from "/images/home/banner.png";
+import { useNavigate } from "react-router-dom";
 
 const Banner = () => {
+  const navigate = useNavigate()
+  const handleOrder =() =>{
+    navigate(`/menu`)
+  }
+
   return (
     <div className="max-w-screen-2xl container mx-auto xl:px-24 bg-gradient-to-r from-0% from-[#FAFAFA] to-[#FCFCFC] to-100%">
       <div className="py-24 flex flex-col md:flex-row-reverse items-center justify-between gap-8">
@@ -104,7 +110,7 @@ const Banner = () => {
             Where Each Cake Weaves a Story of Culinary Mastery and Passionate
             Craftsmanship
           </p>
-          <button className="bg-orange-900 font-semibold btn text-white px-8 py-3 rounded-full">
+          <button onClick={handleOrder} className="bg-orange-900 font-semibold btn text-white px-8 py-3 rounded-full">
             Order Now
           </button>
         </div>
