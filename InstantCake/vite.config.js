@@ -9,7 +9,7 @@ export default defineConfig({
       usePolling: true,
     },
     proxy: {
-      "/carts": "http://localhost:3000",
+      "/carts": "https://node-backend-hj5m.onrender.com/",
     },
   },
 })

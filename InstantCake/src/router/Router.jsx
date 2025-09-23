@@ -89,7 +89,7 @@ const router = createBrowserRouter([
     // {
     //       path: "update-menu/:id",
     //       element: <UpdateMenu/>,
-    //       loader: ({params}) => fetch(`http://localhost:3000/menu/${params.id}`)
+    //       loader: ({params}) => fetch(`https://node-backend-hj5m.onrender.com//menu/${params.id}`)
     // }
   ]
   }

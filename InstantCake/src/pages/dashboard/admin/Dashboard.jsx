@@ -42,7 +42,7 @@ const Dashboard = () => {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem("access-token"); // JWT token
-        const res = await axios.get("http://localhost:3000/api/dashboard-stats", {
+        const res = await axios.get("https://node-backend-hj5m.onrender.com//api/dashboard-stats", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStats(res.data);
