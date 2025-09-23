@@ -86,11 +86,11 @@ const router = createBrowserRouter([
       path: 'manage-items',
       element: <ManageItems/>
     },
-    // {
-    //       path: "update-menu/:id",
-    //       element: <UpdateMenu/>,
-    //       loader: ({params}) => fetch(`https://node-backend-hj5m.onrender.com/menu/${params.id}`)
-    // }
+    {
+          path: "update-menu/:id",
+          element: <UpdateMenu/>,
+          loader: ({params}) => fetch(`https://node-backend-hj5m.onrender.com/menu/${params.id}`)
+    }
   ]
   }
 

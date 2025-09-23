@@ -10,9 +10,10 @@ const ManageItems = () => {
   const axiosSecure = useAxiosSecure();
 //   console.log(menu);
 
-const handleUpdate = () =>{
-  alert("update page under process")
-}
+  const handleUpdate = (id) => {
+    navigate(`/dashboard/update-menu/${id}`);
+  };
+
 
   //   handleDeleteItem
   const handleDeleteItem = (item) => {
@@ -75,11 +76,11 @@ const handleUpdate = () =>{
                   <td>{item.name}</td>
                   <td>${item.price}</td>
                   <td>
-                    {/* <Link to={`/dashboard/update-menu/${item._id}`}> */}
+                    <Link to={`/dashboard/update-menu/${item._id}`}>
                       <button onClick={() => handleUpdate()} className="btn btn-ghost btn-xs bg-orange-500 text-white">
                         <FaEdit />
                       </button>
-                    {/* </Link> */}
+                    </Link> 
                   </td>
                   <td>
                     <button
