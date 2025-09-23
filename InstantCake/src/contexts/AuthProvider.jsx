@@ -92,7 +92,7 @@ const AuthProvider = ({ children }) => {
 
       if (currentUser) {
         try {
-          const { data } = await axios.post('https://node-backend-hj5m.onrender.com//jwt', {
+          const { data } = await axios.post('https://node-backend-hj5m.onrender.com/jwt', {
             email: currentUser.email,
           });
           if (data?.token) {

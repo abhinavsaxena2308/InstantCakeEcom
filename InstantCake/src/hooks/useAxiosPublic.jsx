@@ -3,7 +3,7 @@ import React from 'react'
 
 
 const axiosPublic =  axios.create({
-    baseURL: 'https://node-backend-hj5m.onrender.com/',
+    baseURL: 'https://node-backend-hj5m.onrender.com',
   })
 
 const useAxiosPublic = () => {
