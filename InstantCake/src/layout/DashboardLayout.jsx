@@ -58,7 +58,7 @@ const DashboardLayout = () => {
         <div className="flex items-center justify-between mx-4">
           <label
             htmlFor="my-drawer-2"
-            className="btn btn-primary drawer-button lg:hidden"
+            className="btn bg-orange-900 text-white drawer-button lg:hidden"
           >
             <MdDashboardCustomize />
           </label>
@@ -79,9 +79,11 @@ const DashboardLayout = () => {
         <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
           {/* Sidebar content here */}
           <li>
-            <Link to="/dashboard" className="flex justify-start mb-3">
-              <img src={logo} alt="" className="w-20" />
-              <span className="badge badge-primary">admin</span>
+            <img src={logo} alt="" className="w-22 h-1000" />
+          </li>
+          <li className="self-center">
+            <Link to="/dashboard" className="flex justify-start">
+              <span className="badge badge-primary bg-yellow-300 text-black">admin</span>
             </Link>
           </li>
           <hr />
