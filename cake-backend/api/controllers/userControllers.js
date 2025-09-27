@@ -11,32 +11,22 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// create a new user (idempotent)
 const createUser = async (req, res) => {
-  const { email, ...rest } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ message: "Email is required" });
-  }
-
+  const user = req.body;
+  const query = { email: user.email };
   try {
-    // check if user already exists
-    let user = await User.findOne({ email });
-
-    if (user) {
-      // ✅ return the existing user instead of 409
-      return res.status(200).json(user);
+    let existingUser = await User.findOne(query);
+    if (existingUser) {
+      // ✅ return the same user instead of error
+      return res.status(200).json(existingUser);
     }
-
-    // if user doesn't exist, create a new one
-    user = new User({ email, ...rest });
-    await user.save();
-
-    res.status(201).json(user);
+    const newUser = await User.create(user);
+    res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // delete a user
 const deleteUser = async (req, res) => {
