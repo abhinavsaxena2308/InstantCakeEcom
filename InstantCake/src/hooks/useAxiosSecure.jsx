@@ -18,7 +18,7 @@ const useAxiosSecure = () => {
         const token = localStorage.getItem("access-token");
         if (token) {
           config.headers.authorization = `Bearer ${token}`; // ✅ Correct casing
-        }
+        }     
         return config;
       },
       (error) => Promise.reject(error)

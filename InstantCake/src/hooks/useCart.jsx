@@ -6,16 +6,13 @@ import useAxiosSecure from "./useAxiosSecure";
 const useCart = () => {
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
-  const token = localStorage.getItem('access-token')
+
   const { data: cart = [], refetch } = useQuery({
     queryKey: ["cart", user?.email],
-    enabled: !!user?.email, // ✅ only run when user.email exists
+    enabled: !!user?.email, // only run when user.email exists
     queryFn: async () => {
-      const res = await axiosSecure.get(`/carts?email=${user.email}`,{
-         
-        headers: { Authorization: `Bearer ${token}` } // space after Bearer
-      
-      });
+      if (!user?.email) return [];
+      const res = await axiosSecure.get(`/carts?email=${user.email}`);
       return res.data;
     },
   });

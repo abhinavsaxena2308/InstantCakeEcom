@@ -1,11 +1,13 @@
 import React, { createContext, useEffect, useState } from 'react';
 import {
   GoogleAuthProvider,
+  GithubAuthProvider,
+  FacebookAuthProvider,
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signInWithRedirect,
+  signInWithPopup,
   signOut,
   updateProfile,
 } from "firebase/auth";
@@ -14,67 +16,73 @@ import axios from "axios";
 
 export const AuthContext = createContext();
 const auth = getAuth(app);
+
+// Create provider instances
 const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Create a new account
+  // ===== Create email/password account =====
   const createUser = async (email, password) => {
     setLoading(true);
     try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
-      return result;
-    } catch (error) {
-      console.error("Firebase Signup Error:", error.code, error.message);
-      throw error;
+      return await createUserWithEmailAndPassword(auth, email, password);
     } finally {
       setLoading(false);
     }
   };
 
-  // Signup / login with Google
-  const signUpWithGmail = async () => {
-    setLoading(true);
-    try {
-      const result = await signInWithRedirect(auth, googleProvider);
-      return result;
-    } catch (error) {
-      console.error("Google Signup Error:", error.code, error.message);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Login with email & password
+  // ===== Email/password login =====
   const login = async (email, password) => {
     setLoading(true);
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      return result;
-    } catch (error) {
-      console.error("Firebase Login Error:", error.code, error.message);
-      throw error;
+      return await signInWithEmailAndPassword(auth, email, password);
     } finally {
       setLoading(false);
     }
   };
 
-  // Logout
+  // ===== Unified Social Login =====
+  const signInWithProvider = async (providerName) => {
+    setLoading(true);
+    let provider;
+
+    switch (providerName) {
+      case "google":
+        provider = googleProvider;
+        break;
+      case "github":
+        provider = githubProvider;
+        break;
+      case "facebook":
+        provider = facebookProvider;
+        break;
+      default:
+        throw new Error("Unsupported provider");
+    }
+
+    try {
+      return await signInWithPopup(auth, provider);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ===== Logout =====
   const logOut = async () => {
     setLoading(true);
     try {
       await signOut(auth);
-    } catch (error) {
-      console.error("Logout Error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Update profile
+  // ===== Update user profile =====
   const updateUserProfile = async (name, photoURL) => {
     if (!auth.currentUser) return;
     try {
@@ -84,7 +92,7 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // Track signed-in user and get JWT
+  // ===== Track user and get JWT =====
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -95,9 +103,7 @@ const AuthProvider = ({ children }) => {
           const { data } = await axios.post('https://node-backend-hj5m.onrender.com/jwt', {
             email: currentUser.email,
           });
-          if (data?.token) {
-            localStorage.setItem("access-token", data.token);
-          }
+          if (data?.token) localStorage.setItem("access-token", data.token);
         } catch (err) {
           console.error("JWT fetch error:", err);
         }
@@ -115,10 +121,10 @@ const AuthProvider = ({ children }) => {
     user,
     loading,
     createUser,
-    signUpWithGmail,
     login,
-    logOut,
+    signInWithProvider,
     updateUserProfile,
+    logOut,
   };
 
   return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>;

@@ -14,12 +14,14 @@ const getAllUsers = async (req, res) => {
 const createUser = async (req, res) => {
   const user = req.body;
   const query = { email: user.email };
+
   try {
-    let existingUser = await User.findOne(query);
+    const existingUser = await User.findOne(query);
     if (existingUser) {
-      // ✅ return the same user instead of error
+      // ✅ return the existing user instead of error
       return res.status(200).json(existingUser);
     }
+
     const newUser = await User.create(user);
     res.status(201).json(newUser);
   } catch (error) {

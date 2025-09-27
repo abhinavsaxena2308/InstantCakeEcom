@@ -1,170 +1,155 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaFacebookF, FaGithub, FaGoogle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
-import { AuthContext} from "../contexts/AuthProvider";
-import axios from "axios";
-import useAuth from '../hooks/useAuth'
-import useAxiosPublic from "../hooks/useAxiosPublic";
-
+import useAuth from "../hooks/useAuth";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const Login = () => {
-  const [errorMessage, seterrorMessage] = useState("");
-  const { signUpWithGmail, login } = useAuth();
+  const [errorMessage, setErrorMessage] = useState("");
+  const { login, signInWithProvider } = useAuth(); // unified social login
+  const axiosSecure = useAxiosSecure();
 
-  const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
   const location = useLocation();
-
   const from = location.state?.from?.pathname || "/";
 
-  //react hook form
-  const {
-    register,
-    handleSubmit, reset,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
-  const onSubmit = (data) => {
-    const email = data.email;
-    const password = data.password;
-    login(email, password)
-      .then((result) => {
-        // Signed in
-        const user = result.user;
-        const userInfor = {
-          name: data.name,
-          email: data.email,
-        };
-        axiosPublic
-          .post("/users", userInfor)
-          .then((response) => {
-            // console.log(response);
-            alert("Signin successful!");
-            navigate(from, { replace: true });
-          });
-        // console.log(user);
-        // ...
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 409) {
-    alert("User already exists. Please log in instead.");
-  } else {
-    alert("Something went wrong. Try again.");
-  }
-      });
-      reset()
+  // ======= Email / Password Login =======
+  const onSubmit = async (data) => {
+    setErrorMessage("");
+    try {
+      const result = await login(data.email, data.password);
+      const user = result.user;
 
+      const userInfo = {
+        name: data.name || user.displayName || "User",
+        email: data.email,
+      };
+
+      // Idempotent: create user if not exists
+      await axiosSecure.post("/users", userInfo);
+
+      // Fetch JWT
+      const jwtRes = await axiosSecure.post("/jwt", { email: user.email });
+      localStorage.setItem("access-token", jwtRes.data.token);
+
+      navigate(from, { replace: true });
+      reset();
+    } catch (error) {
+      if (error.response?.status === 409) {
+        // User already exists: just get JWT
+        const jwtRes = await axiosSecure.post("/jwt", { email: data.email });
+        localStorage.setItem("access-token", jwtRes.data.token);
+        navigate(from, { replace: true });
+      } else {
+        setErrorMessage("Something went wrong. Try again.");
+        console.error(error);
+      }
+    }
   };
 
-  // login with google
-  // login with google
-  const handleRegister = () => {
-    signUpWithGmail()
-      .then((result) => {
-        const user = result.user;
-        const userInfor = {
-          name: result?.user?.displayName,
-          email: result?.user?.email,
-        };
-        axiosPublic
-          .post("/users", userInfor)
-          .then((response) => {
-            // console.log(response);
-            alert("Signin successful!");
-            navigate("/");
-          });
-      })
-      .catch((error) => console.log(error));
+  // ======= Social Login Handler =======
+  const handleSocialLogin = async (providerName) => {
+    setErrorMessage("");
+    try {
+      const result = await signInWithProvider(providerName); // google, facebook, github
+      const user = result.user;
+
+      const userInfo = {
+        name: user.displayName || `${providerName} User`,
+        email: user.email,
+      };
+
+      // Idempotent: create user if not exists
+      await axiosSecure.post("/users", userInfo);
+
+      // Fetch JWT
+      const jwtRes = await axiosSecure.post("/jwt", { email: user.email });
+      localStorage.setItem("access-token", jwtRes.data.token);
+
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error(`${providerName} login error:`, error);
+      setErrorMessage(`${providerName} login failed. Try again.`);
+    }
   };
+
   return (
     <div className="max-w-md bg-white shadow w-full mx-auto flex items-center justify-center my-20">
-    <div className="mb-5">
-    <form
-            className="card-body"
-            method="dialog"
-            onSubmit={handleSubmit(onSubmit)}
+      <div className="mb-5 w-full">
+        <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
+          <h3 className="font-bold text-lg mb-4">Please Login!</h3>
+
+          <div className="form-control mb-3">
+            <label className="label">
+              <span className="label-text">Email</span>
+            </label>
+            <input
+              type="email"
+              placeholder="Email"
+              className="input input-bordered"
+              {...register("email", { required: true })}
+            />
+          </div>
+
+          <div className="form-control mb-3">
+            <label className="label">
+              <span className="label-text">Password</span>
+            </label>
+            <input
+              type="password"
+              placeholder="Password"
+              className="input input-bordered"
+              {...register("password", { required: true })}
+            />
+          </div>
+
+          {errorMessage && (
+            <p className="text-red-500 text-xs italic mb-2">{errorMessage}</p>
+          )}
+
+          <div className="form-control mt-4">
+            <input
+              type="submit"
+              className="btn bg-orange-900 text-white"
+              value="Login"
+            />
+          </div>
+
+          <p className="text-center my-2">
+            Don’t have an account?{" "}
+            <Link to="/signup" className="underline text-red ml-1">
+              Signup Now
+            </Link>
+          </p>
+        </form>
+
+        {/* Social Login Buttons */}
+        <div className="text-center mt-4 space-x-3">
+          <button
+            onClick={() => handleSocialLogin("google")}
+            className="btn btn-circle hover:bg-orange-900 hover:text-white"
           >
-            <h3 className="font-bold text-lg">Please Login!</h3>
-
-            {/* email */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                placeholder="email"
-                className="input input-bordered"
-                {...register("email")}
-              />
-            </div>
-
-            {/* password */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                placeholder="password"
-                className="input input-bordered"
-                {...register("password", { required: true })}
-              />
-              <label className="label">
-                <a href="#" className="label-text-alt link link-hover mt-2">
-                  Forgot password?
-                </a>
-              </label>
-            </div>
-
-            {/* show errors */}
-            {errorMessage ? (
-              <p className="text-red text-xs italic">
-                Provide a correct username & password.
-              </p>
-            ) : (
-              ""
-            )}
-
-            {/* submit btn */}
-            <div className="form-control mt-4">
-              <input
-                type="submit"
-                className="btn bg-orange-900 text-white"
-                value="Login"
-              />
-            </div>
-
-            {/* close btn */}
-            <Link to="/">
-            <div
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            >
-              ✕
-            </div></Link>
-
-            <p className="text-center my-2">
-              Donot have an account?
-              <Link to="/signup" className="underline text-red ml-1">
-                Signup Now
-              </Link>
-            </p>
-          </form>
-    <div className="text-center space-x-3">
-        <button onClick={handleRegister} className="btn btn-circle hover:bg-orange-900 hover:text-white">
-          <FaGoogle />
-        </button>
-        <button className="btn btn-circle hover:bg-orange-900 hover:text-white">
-          <FaFacebookF />
-        </button>
-        <button className="btn btn-circle hover:bg-orange-900 hover:text-white">
-          <FaGithub />
-        </button>
+            <FaGoogle />
+          </button>
+          <button
+            onClick={() => handleSocialLogin("facebook")}
+            className="btn btn-circle hover:bg-orange-900 hover:text-white"
+          >
+            <FaFacebookF />
+          </button>
+          <button
+            onClick={() => handleSocialLogin("github")}
+            className="btn btn-circle hover:bg-orange-900 hover:text-white"
+          >
+            <FaGithub />
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

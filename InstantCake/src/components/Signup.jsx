@@ -6,7 +6,7 @@ import { AuthContext } from "../contexts/AuthProvider";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 
 const Signup = () => {
-  const { createUser, updateUserProfile, signUpWithGmail } = useContext(AuthContext);
+  const { createUser, updateUserProfile, signInWithProvider } = useContext(AuthContext);
   const axiosPublic = useAxiosPublic();
 
   const [signupError, setSignupError] = useState("");
@@ -14,11 +14,11 @@ const Signup = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
-  // Signup with email & password
+  // ===== Email / Password Signup =====
   const onSubmit = async (data) => {
-    setSignupError(""); // clear previous errors
+    setSignupError("");
     try {
       // Create Firebase account
       const result = await createUser(data.email, data.password);
@@ -27,44 +27,61 @@ const Signup = () => {
       await updateUserProfile(data.name, data.photoURL || "");
 
       // Save user to backend
-      await axiosPublic.post("/users", {
-        name: data.name,
-        email: data.email,
-      });
+      try {
+        await axiosPublic.post("/users", { name: data.name, email: data.email });
+      } catch (err) {
+        if (err.response?.status === 409) {
+          console.log("User already exists. Proceeding...");
+        } else {
+          throw err;
+        }
+      }
+
+      // Get JWT
+      const jwtRes = await axiosPublic.post("/jwt", { email: data.email });
+      localStorage.setItem("access-token", jwtRes.data.token);
 
       alert("Signup successful!");
+      reset();
       navigate(from, { replace: true });
     } catch (error) {
       console.error("Signup Error:", error);
-
-      // Handle duplicate user
-    if (error.response?.status === 409) {
-      setSignupError("User already exists! Please log in.");
-    } else {
-      setSignupError(error?.response?.data?.message || error.message);
-    }
-      // Show Firebase or Axios error
       setSignupError(error?.response?.data?.message || error.message);
     }
   };
 
-  // Signup with Google
-  const handleGoogleSignup = async () => {
+  // ===== Social Signup/Login Handler =====
+  const handleSocialSignup = async (providerName) => {
     setSignupError("");
     try {
-      const result = await signUpWithGmail();
+      const result = await signInWithProvider(providerName); // 'google', 'facebook', 'github'
+      const user = result.user;
+
       const userInfo = {
-        name: result.user.displayName,
-        email: result.user.email,
+        name: user.displayName || `${providerName} User`,
+        email: user.email,
       };
 
-      await axiosPublic.post("/users", userInfo);
+      // Create user in backend (idempotent)
+      try {
+        await axiosPublic.post("/users", userInfo);
+      } catch (err) {
+        if (err.response?.status === 409) {
+          console.log(`${providerName} user already exists. Proceeding...`);
+        } else {
+          throw err;
+        }
+      }
 
-      alert("Signup successful!");
-      navigate("/");
+      // Get JWT
+      const jwtRes = await axiosPublic.post("/jwt", { email: user.email });
+      localStorage.setItem("access-token", jwtRes.data.token);
+
+      alert(`${providerName} Signup/Login successful!`);
+      navigate(from, { replace: true });
     } catch (error) {
-      console.error("Google Signup Error:", error);
-      setSignupError(error?.response?.data?.message || error.message);
+      console.error(`${providerName} Signup Error:`, error);
+      setSignupError(`${providerName} Signup/Login failed. Try again.`);
     }
   };
 
@@ -72,14 +89,14 @@ const Signup = () => {
     <div className="max-w-md bg-white shadow w-full mx-auto flex items-center justify-center my-20">
       <div className="mb-5 w-full">
         <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
-          <h3 className="font-bold text-lg">Please Create An Account!</h3>
+          <h3 className="font-bold text-lg mb-4">Create An Account</h3>
 
           {/* Name */}
-          <div className="form-control">
+          <div className="form-control mb-3">
             <label className="label"><span className="label-text">Name</span></label>
             <input
               type="text"
-              placeholder="Your name"
+              placeholder="Your Name"
               className="input input-bordered"
               {...register("name", { required: "Name is required" })}
             />
@@ -87,7 +104,7 @@ const Signup = () => {
           </div>
 
           {/* Email */}
-          <div className="form-control">
+          <div className="form-control mb-3">
             <label className="label"><span className="label-text">Email</span></label>
             <input
               type="email"
@@ -99,7 +116,7 @@ const Signup = () => {
           </div>
 
           {/* Password */}
-          <div className="form-control">
+          <div className="form-control mb-3">
             <label className="label"><span className="label-text">Password</span></label>
             <input
               type="password"
@@ -113,35 +130,38 @@ const Signup = () => {
             {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
           </div>
 
-          {/* Firebase / Backend error */}
+          {/* Backend / Firebase Error */}
           {signupError && <p className="text-red-600 text-sm mt-2">{signupError}</p>}
 
-          {/* Submit button */}
-          <div className="form-control mt-6">
-            <input type="submit" className="btn bg-orange-900 text-white" value="Sign up" />
+          {/* Submit */}
+          <div className="form-control mt-4">
+            <input type="submit" className="btn bg-orange-900 text-white" value="Sign Up" />
           </div>
 
-          {/* Login link */}
-          <div className="text-center my-2">
-            Have an account?
-            <Link to="/login">
-              <button className="ml-2 underline">Login here</button>
-            </Link>
-          </div>
+          <p className="text-center my-2">
+            Already have an account?
+            <Link to="/login" className="underline ml-1">Login here</Link>
+          </p>
         </form>
 
-        {/* Social Signup */}
-        <div className="text-center space-x-3 mt-3">
+        {/* Social Signup Buttons */}
+        <div className="text-center mt-4 space-x-3">
           <button
-            onClick={handleGoogleSignup}
+            onClick={() => handleSocialSignup("google")}
             className="btn btn-circle hover:bg-orange-900 hover:text-white"
           >
             <FaGoogle />
           </button>
-          <button className="btn btn-circle hover:bg-orange-900 hover:text-white">
+          <button
+            onClick={() => handleSocialSignup("facebook")}
+            className="btn btn-circle hover:bg-orange-900 hover:text-white"
+          >
             <FaFacebookF />
           </button>
-          <button className="btn btn-circle hover:bg-orange-900 hover:text-white">
+          <button
+            onClick={() => handleSocialSignup("github")}
+            className="btn btn-circle hover:bg-orange-900 hover:text-white"
+          >
             <FaGithub />
           </button>
         </div>
