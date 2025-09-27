@@ -5,7 +5,7 @@ import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
   signOut,
   updateProfile,
 } from "firebase/auth";
@@ -38,7 +38,7 @@ const AuthProvider = ({ children }) => {
   const signUpWithGmail = async () => {
     setLoading(true);
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      const result = await signInWithRedirect(auth, googleProvider);
       return result;
     } catch (error) {
       console.error("Google Signup Error:", error.code, error.message);
