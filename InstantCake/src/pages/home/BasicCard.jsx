@@ -4,8 +4,8 @@ const BasicCard = () => {
   return (
     <div
       style={{
-        width: 300,
-        height: 300,
+        width: 250,
+        height: 250,
         border: "1px solid rgb(49, 54, 61)",
         backgroundColor: "#0d1117",
         color: "rgba(255, 255, 255, 0.5)",

@@ -175,6 +175,13 @@ const Login = () => {
             Signup Now
           </Link>
         </p>
+        <p className="text-center mt-4 text-white/80 text-sm">
+          Back to Home?
+          <Link to="/" className="underline text-green-400 ml-1">
+            Home
+          </Link>
+        </p>
+        
       </div>
     </div>
   );

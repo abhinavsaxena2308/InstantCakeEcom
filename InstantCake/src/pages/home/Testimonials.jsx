@@ -1,50 +1,64 @@
-/* eslint-disable react/no-unescaped-entities */
 import React from "react";
 import { FaStar } from "react-icons/fa";
 
+const testimonialsData = [
+  {
+    text: "I ordered a Black Forest cake from InstantCake for my parents’ anniversary, and it was simply perfect! 🎂✨ The cake was super fresh, beautifully decorated, and tasted heavenly. Quick delivery and careful packaging – arrived just like on the website. Definitely my go-to place now for all celebrations!",
+    name: "Samantha W.",
+    rating: 4.9,
+    reviews: "18.6k Reviews",
+    avatar: "/images/home/testimonials/testimonial1.png",
+  },
+  {
+    text: "The Red Velvet cake I ordered was absolutely delicious! The flavors were perfect, and the presentation was stunning. Highly recommend InstantCake for any special occasion.",
+    name: "James L.",
+    rating: 4.8,
+    reviews: "12.3k Reviews",
+    avatar: "/images/home/testimonials/testimonial2.png",
+  },
+  {
+    text: "InstantCake made my birthday extra special with a personalized chocolate cake. Loved the taste and the prompt delivery. Customer service was friendly and helpful!",
+    name: "Priya K.",
+    rating: 5.0,
+    reviews: "22.1k Reviews",
+    avatar: "/images/home/testimonials/testimonial3.png",
+  },
+];
+
 const Testimonials = () => {
   return (
-    <div className="section-container">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-12">
-        <div className="md:w-1/2">
-          <img src="/images/home/testimonials/testimonials.png" alt="" />
-        </div>
-        <div className="md:w-1/2">
-          <div className="text-left md:w-4/5">
-            <p className="subtitle">Testimonials</p>
-            <h2 className="title">What Our Customers Say About Us</h2>
-            <blockquote className="my-5 text-secondary leading-[30px]">
-              "I ordered a Black Forest cake from InstantCake for my parents’ anniversary, and it was simply perfect! 🎂✨ The cake was super fresh, beautifully decorated, and tasted heavenly. What I loved the most was the quick delivery and the care taken in packaging – it arrived just like it was shown on the website. Definitely my go-to place now for all celebrations!"
-            </blockquote>
-           
-           {/* avater */}
+    <div className="max-w-screen-2xl container mx-auto xl:px-24 px-4 py-20">
+      <div className="text-center mb-12 space-y-3">
+        <p className="subtitle text-orange-700 uppercase tracking-wide">Testimonials</p>
+        <h2 className="title text-3xl md:text-4xl font-bold">
+          What Our Customers <span className="text-orange-900">Say About Us</span>
+        </h2>
+      </div>
 
-           <div className="flex items-center gap-4 flex-wrap">
-           <div className="avatar-group -space-x-6 rtl:space-x-reverse">
-              <div className="avatar">
-                <div className="w-12 cursor-pointer">
-                  <img src="/images/home/testimonials/testimonial1.png" />
-                </div>
+      <div className="grid md:grid-cols-3 gap-8">
+        {testimonialsData.map((item, i) => (
+          <div
+            key={i}
+            className="bg-gray-50 text-orange-900 backdrop-blur-md rounded-xl shadow-lg p-6 hover:shadow-2xl hover:scale-105 transition-transform duration-300 flex flex-col justify-between"
+          >
+            <blockquote className="text-orange-900 text-base leading-relaxed mb-4">
+              "{item.text}"
+            </blockquote>
+            <div className="flex items-center gap-4 mt-auto">
+              <div className="avatar w-14 h-14 rounded-full overflow-hidden border-2 border-white/30">
+                <img src={item.avatar} alt={item.name} className="w-full h-full object-cover"/>
               </div>
-              <div className="avatar">
-                <div className="w-12 cursor-pointer">
-                  <img src="/images/home/testimonials/testimonial2.png" />
-                </div>
-              </div>
-              <div className="avatar">
-                <div className="w-12 cursor-pointer">
-                  <img src="/images/home/testimonials/testimonial3.png" />
+              <div>
+                <h5 className="text-orange-900 font-semibold">{item.name}</h5>
+                <div className="flex items-center gap-2 text-sm text-black">
+                  <FaStar className="text-yellow-400"/>
+                  <span className="font-medium">{item.rating}</span>
+                  <span className="text-gray-900">{`(${item.reviews})`}</span>
                 </div>
               </div>
             </div>
-            
-            <div className="space-y-1">
-              <h5 className="text-lg font-semibold">Customer Feedback</h5>
-              <div className="flex items-center gap-2"><FaStar className="text-yellow-400"/> <span className="font-medium">4.9</span> <span className="text-[#807E7E]">(18.6k Reviews)</span></div>
-            </div>
-           </div>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );
