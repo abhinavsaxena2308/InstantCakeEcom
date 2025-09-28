@@ -22,17 +22,17 @@ const sharedLinks = (
   <>
     <li className="mt-3">
       <Link to="/">
-        <MdDashboard /> Home
+        <MdDashboard className="text-orange-700"/> Home
       </Link>
     </li>
     <li>
-        <Link to="/menu"><FaCartShopping/> Menu</Link>
+        <Link to="/menu"><FaCartShopping className="text-orange-700"/> Menu</Link>
     </li>
     <li>
-        <Link to="/menu"><FaLocationArrow/> Orders Tracking</Link>
+        <Link to="/menu"><FaLocationArrow className="text-orange-700"/> Orders Tracking</Link>
     </li>
     <li>
-        <Link to="/menu"><FaQuestionCircle/> Customer Support</Link>
+        <Link to="/menu"><FaQuestionCircle className="text-orange-700"/> Customer Support</Link>
     </li>
   </>
 );
@@ -71,58 +71,77 @@ const DashboardLayout = () => {
         </div>
       </div>
       <div className="drawer-side">
-        <label
-          htmlFor="my-drawer-2"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        ></label>
-        <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-          {/* Sidebar content here */}
-          <li>
-            <img src={logo} alt="" className="w-22 h-1000" />
-          </li>
-          <li className="self-center">
-            <Link to="/dashboard" className="flex justify-start">
-              <span className="badge badge-primary bg-yellow-300 text-black">admin</span>
-            </Link>
-          </li>
-          <hr />
-          <li className="mt-3">
-            <Link to="/dashboard">
-              <MdDashboard /> Dashboard
-            </Link>
-          </li>
-          <li>
-            <Link to="/dashboard/manage-bookings">
-              <FaShoppingBag /> Manage Bookings
-            </Link>
-          </li>
-          <li>
-            <Link to="/dashboard/add-menu">
-              <FaPlusCircle />
-              Add Menu
-            </Link>
-          </li>
-          <li>
-            <Link to="/dashboard/manage-items">
-              <FaEdit /> Manage Items
-            </Link>
-          </li>
-          <li className="mb-3">
-            <Link to="/dashboard/users">
-              <FaUser /> All Users
-            </Link>
-          </li>
+  <label
+    htmlFor="my-drawer-2"
+    aria-label="close sidebar"
+    className="drawer-overlay"
+  ></label>
+  <ul className="menu p-4 w-80 min-h-full bg-gradient-to-b from-orange-100 to-orange-300 text-base-content shadow-lg rounded-r-2xl">
+    
+    {/* Logo Centered */}
+    <li className=" mb-6 flex items-center">
+      <img
+        src={logo}
+        alt="Logo"
+        className="w-32 h-auto bg-gradient-to-r p-2 from-yellow-400 to-orange-500 rounded-lg shadow-md transform hover:scale-105 transition duration-300"
+      />
+    </li>
 
-          <hr />
-      
+    {/* Admin Logo / Badge */}
+<li className="self-center mb-6 flex flex-col items-center">
+  <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-4 py-2 rounded-xl shadow-xl flex items-center gap-2 transform hover:scale-105 transition duration-300">
+    <FaRegUser className="text-2xl" />
+    <span className="font-bold uppercase tracking-wide">Admin</span>
+  </div>
+</li>
 
-          {/* shared nav links */}
-          {
-              sharedLinks
-          }
-        </ul>
-      </div>
+
+    <hr className="my-2 border-orange-500" />
+
+    {/* Sidebar Links */}
+    <li className="mt-2 hover:bg-orange-200 rounded-lg transition-all duration-200">
+      <Link to="/dashboard" className="flex items-center gap-2 px-3 py-2">
+        <MdDashboard className="text-orange-700" /> Dashboard
+      </Link>
+    </li>
+
+    <li className="hover:bg-orange-200 rounded-lg transition-all duration-200">
+      <Link to="/dashboard/manage-bookings" className="flex items-center gap-2 px-3 py-2">
+        <FaShoppingBag className="text-orange-700" /> Manage Bookings
+      </Link>
+    </li>
+
+    <li className="hover:bg-orange-200 rounded-lg transition-all duration-200">
+      <Link to="/dashboard/add-menu" className="flex items-center gap-2 px-3 py-2">
+        <FaPlusCircle className="text-orange-700" /> Add Menu
+      </Link>
+    </li>
+
+    <li className="hover:bg-orange-200 rounded-lg transition-all duration-200">
+      <Link to="/dashboard/manage-items" className="flex items-center gap-2 px-3 py-2">
+        <FaEdit className="text-orange-700" /> Manage Items
+      </Link>
+    </li>
+
+    <li className="mb-3 hover:bg-orange-200 rounded-lg transition-all duration-200">
+      <Link to="/dashboard/users" className="flex items-center gap-2 px-3 py-2">
+        <FaUser className="text-orange-700" /> All Users
+      </Link>
+    </li>
+
+    <hr className="my-2 border-orange-500" />
+
+    {/* Shared Links */}
+    {sharedLinks &&
+      React.Children.map(sharedLinks, (link) =>
+        React.cloneElement(link, {
+          className: "hover:bg-orange-200 rounded-lg transition-all duration-200 px-3 py-2",
+        })
+      )}
+  </ul>
+</div>
+
+
     </div> : (loading ? <Login/> : <div className="h-screen flex justify-center items-center"><Link to="/"><button className="btn bg-orange-900 text-white">Back to Home</button></Link></div>)
     }
     </div>
