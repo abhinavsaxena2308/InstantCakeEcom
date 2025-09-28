@@ -1,23 +1,23 @@
-import React, { createContext, useEffect, useState } from 'react';
-import {
+import { 
   GoogleAuthProvider,
   GithubAuthProvider,
   FacebookAuthProvider,
-  createUserWithEmailAndPassword,
-  getAuth,
+  signInWithPopup, 
+  signInWithRedirect, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  updateProfile, 
   onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-  updateProfile,
+  getAuth
 } from "firebase/auth";
+import React, { createContext, useState, useEffect } from "react";
 import app from "../firebase/firebase.config";
 import axios from "axios";
 
 export const AuthContext = createContext();
 const auth = getAuth(app);
 
-// Create provider instances
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
@@ -26,94 +26,46 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ===== Create email/password account =====
-  const createUser = async (email, password) => {
-    setLoading(true);
-    try {
-      return await createUserWithEmailAndPassword(auth, email, password);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Email/password
+  const createUser = (email, password) => createUserWithEmailAndPassword(auth, email, password);
+  const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
+  const logOut = () => signOut(auth);
+  const updateUserProfile = (name, photoURL) => updateProfile(auth.currentUser, { displayName: name, photoURL });
 
-  // ===== Email/password login =====
-  const login = async (email, password) => {
-    setLoading(true);
-    try {
-      return await signInWithEmailAndPassword(auth, email, password);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ===== Unified Social Login =====
-  const signInWithProvider = async (providerName) => {
+  // Unified social login
+  const signUpWithProvider = async (providerName) => {
     setLoading(true);
     let provider;
-
-    switch (providerName) {
-      case "google":
-        provider = googleProvider;
-        break;
-      case "github":
-        provider = githubProvider;
-        break;
-      case "facebook":
-        provider = facebookProvider;
-        break;
-      default:
-        throw new Error("Unsupported provider");
-    }
+    if (providerName === "google") provider = googleProvider;
+    else if (providerName === "github") provider = githubProvider;
+    else if (providerName === "facebook") provider = facebookProvider;
+    else throw new Error("Unsupported provider");
 
     try {
-      return await signInWithPopup(auth, provider);
+      // Using popup for all providers
+      const result = await signInWithPopup(auth, provider);
+      return result;
     } finally {
       setLoading(false);
     }
   };
 
-  // ===== Logout =====
-  const logOut = async () => {
-    setLoading(true);
-    try {
-      await signOut(auth);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ===== Update user profile =====
-  const updateUserProfile = async (name, photoURL) => {
-    if (!auth.currentUser) return;
-    try {
-      await updateProfile(auth.currentUser, { displayName: name, photoURL });
-    } catch (error) {
-      console.error("Update Profile Error:", error);
-    }
-  };
-
-  // ===== Track user and get JWT =====
+  // Track auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      setLoading(true);
-
       if (currentUser) {
         try {
-          const { data } = await axios.post('https://node-backend-hj5m.onrender.com/jwt', {
-            email: currentUser.email,
-          });
+          const { data } = await axios.post("https://node-backend-hj5m.onrender.com/jwt", { email: currentUser.email });
           if (data?.token) localStorage.setItem("access-token", data.token);
         } catch (err) {
-          console.error("JWT fetch error:", err);
+          console.error("JWT error:", err);
         }
       } else {
         localStorage.removeItem("access-token");
       }
-
       setLoading(false);
     });
-
     return unsubscribe;
   }, []);
 
@@ -122,9 +74,9 @@ const AuthProvider = ({ children }) => {
     loading,
     createUser,
     login,
-    signInWithProvider,
-    updateUserProfile,
     logOut,
+    updateUserProfile,
+    signUpWithProvider, // ✅ Add this
   };
 
   return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>;

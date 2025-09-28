@@ -1,36 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import logo from "/logo.png";
 import { FaRegUser } from "react-icons/fa";
-import Modal from "./Modal";
-import Profile from "./Profile";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useCart from "../hooks/useCart";
 import useAuth from "../hooks/useAuth";
+import Profile from "./Profile";
 
 const Navbar = () => {
   const [isSticky, setSticky] = useState(false);
-
   const { user } = useAuth();
   const [cart] = useCart();
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     setSticky(window.scrollY > 0);
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []);
+  const navigate = useNavigate();
 
   const navItems = (
     <>
       <li>
-        <a
-          href="/"
+        <Link
+          to="/"
           className="text-black hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300"
         >
           Home
-        </a>
+        </Link>
       </li>
       <li tabIndex={0}>
         <details className="group">
@@ -39,19 +29,22 @@ const Navbar = () => {
           </summary>
           <ul className="p-2 shadow-lg bg-white text-gray-700 rounded-xl space-y-2 mt-2 border">
             <li>
-              <a className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300" href="/menu">
+              <Link
+                to="/menu"
+                className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300"
+              >
                 All
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
+              <Link className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
                 Salad
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
+              <Link className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
                 Pizza
-              </a>
+              </Link>
             </li>
           </ul>
         </details>
@@ -63,40 +56,36 @@ const Navbar = () => {
           </summary>
           <ul className="p-2 shadow-lg bg-white text-gray-700 rounded-xl space-y-2 mt-2 border">
             <li>
-              <a className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
+              <Link className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
                 Online Order
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
+              <Link className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
                 Table Booking
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
+              <Link className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
                 Order Tracking
-              </a>
+              </Link>
             </li>
           </ul>
         </details>
       </li>
       <li>
-        <a className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
+        <Link className="hover:bg-[#B8A684] hover:text-white rounded-tl-2xl rounded-br-2xl px-3 py-2 transition-all duration-300">
           Offers
-        </a>
+        </Link>
       </li>
     </>
   );
 
   return (
-    <header
-      className={`max-w-screen-2xl container mx-auto fixed top-0 left-0 right-0 transition-all duration-300 ease-in-out`}
-    >
+    <header className="max-w-screen-2xl container mx-auto fixed top-0 left-0 right-0 z-50">
       <div
         className={`navbar bg-[#F2E6D8] text-black xl:px-24 ${
-          isSticky
-            ? "shadow-md bg-base-100 text-gray-800"
-            : ""
+          isSticky ? "shadow-md bg-base-100 text-gray-800" : ""
         }`}
       >
         <div className="navbar-start">
@@ -109,12 +98,7 @@ const Navbar = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
               </svg>
             </label>
             <ul
@@ -124,38 +108,19 @@ const Navbar = () => {
               {navItems}
             </ul>
           </div>
-          <a href="/">
+          <Link to="/">
             <img src={logo} alt="logo" />
-          </a>
+          </Link>
         </div>
+
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">{navItems}</ul>
         </div>
-        <div className="navbar-end ">
-          {/* search */}
-          <button className="btn btn-ghost btn-circle hidden lg:flex hover:bg-[#B8A684] hover:text-white transition-all duration-300">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </button>
 
-          {/* cart items */}
-          <Link to="cart-page">
-            <label
-              tabIndex={0}
-              className="btn btn-ghost btn-circle items-center justify-center mr-3 hover:bg-[#B8A684] hover:text-white transition-all duration-300"
-            >
+        <div className="navbar-end flex items-center gap-3">
+          {/* Cart */}
+          <Link to="/cart-page">
+            <div className="btn btn-ghost btn-circle items-center justify-center hover:bg-[#B8A684] hover:text-white transition-all duration-300">
               <div className="indicator">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -168,31 +133,25 @@ const Navbar = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 
-                      0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 
-                      11-4 0 2 2 0 014 0z"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                <span className="badge badge-sm indicator-item bg-[#B8A684] text-white">
-                  {cart.length}
-                </span>
+                <span className="badge badge-sm indicator-item bg-[#B8A684] text-white">{cart.length}</span>
               </div>
-            </label>
+            </div>
           </Link>
 
-          {/* login btn */}
+          {/* Login / Profile */}
           {user ? (
             <Profile user={user} />
           ) : (
             <button
-              onClick={() => document.getElementById("my_modal_5").showModal()}
+              onClick={() => navigate("/login", { state: { from: window.location.pathname } })}
               className="btn flex items-center gap-2 rounded-full px-6 bg-[#B8A684] text-white hover:bg-[#B8A684]/80 transition-all duration-300"
             >
               <FaRegUser /> Login
             </button>
           )}
-
-          <Modal />
         </div>
       </div>
     </header>

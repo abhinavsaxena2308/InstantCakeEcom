@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaFacebookF, FaGithub, FaGoogle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
-import useAuth from "../hooks/useAuth";
-import useAxiosSecure from "../hooks/useAxiosSecure";
+import { AuthContext } from "../contexts/AuthProvider";
+import useAxiosPublic from "../hooks/useAxiosPublic";
 
 const Login = () => {
-  const [errorMessage, setErrorMessage] = useState("");
-  const { login, signInWithProvider } = useAuth(); // unified social login
-  const axiosSecure = useAxiosSecure();
+  const { login, signUpWithProvider } = useContext(AuthContext);
+  const axiosPublic = useAxiosPublic();
+
+  const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,45 +18,39 @@ const Login = () => {
 
   const { register, handleSubmit, reset } = useForm();
 
-  // ======= Email / Password Login =======
+  // Email/Password Login
   const onSubmit = async (data) => {
-    setErrorMessage("");
+    setLoginError("");
+    setLoading(true);
     try {
       const result = await login(data.email, data.password);
       const user = result.user;
 
-      const userInfo = {
-        name: data.name || user.displayName || "User",
-        email: data.email,
-      };
-
-      // Idempotent: create user if not exists
-      await axiosSecure.post("/users", userInfo);
-
-      // Fetch JWT
-      const jwtRes = await axiosSecure.post("/jwt", { email: user.email });
+      // get jwt token
+      const jwtRes = await axiosPublic.post("/jwt", { email: user.email });
       localStorage.setItem("access-token", jwtRes.data.token);
 
       navigate(from, { replace: true });
       reset();
     } catch (error) {
-      if (error.response?.status === 409) {
-        // User already exists: just get JWT
-        const jwtRes = await axiosSecure.post("/jwt", { email: data.email });
-        localStorage.setItem("access-token", jwtRes.data.token);
-        navigate(from, { replace: true });
+      console.error("Login Error:", error);
+      if (error.code === "auth/user-not-found") {
+        alert("Account does not exist. Please signup first.");
+        navigate("/signup");
       } else {
-        setErrorMessage("Something went wrong. Try again.");
-        console.error(error);
+        setLoginError("Invalid email or password. Try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ======= Social Login Handler =======
+  // Social Login
   const handleSocialLogin = async (providerName) => {
-    setErrorMessage("");
+    setLoginError("");
+    setLoading(true);
     try {
-      const result = await signInWithProvider(providerName); // google, facebook, github
+      const result = await signUpWithProvider(providerName);
       const user = result.user;
 
       const userInfo = {
@@ -62,17 +58,21 @@ const Login = () => {
         email: user.email,
       };
 
-      // Idempotent: create user if not exists
-      await axiosSecure.post("/users", userInfo);
+      try {
+        await axiosPublic.post("/users", userInfo);
+      } catch (err) {
+        if (err.response?.status !== 409) throw err; // 409 = already exists
+      }
 
-      // Fetch JWT
-      const jwtRes = await axiosSecure.post("/jwt", { email: user.email });
+      const jwtRes = await axiosPublic.post("/jwt", { email: user.email });
       localStorage.setItem("access-token", jwtRes.data.token);
 
       navigate(from, { replace: true });
     } catch (error) {
       console.error(`${providerName} login error:`, error);
-      setErrorMessage(`${providerName} login failed. Try again.`);
+      setLoginError(`${providerName} login failed. Try again.`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,9 +80,10 @@ const Login = () => {
     <div className="max-w-md bg-white shadow w-full mx-auto flex items-center justify-center my-20">
       <div className="mb-5 w-full">
         <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
-          <h3 className="font-bold text-lg mb-4">Please Login!</h3>
+          <h3 className="font-bold text-lg">Please Login</h3>
 
-          <div className="form-control mb-3">
+          {/* Email */}
+          <div className="form-control mb-2">
             <label className="label">
               <span className="label-text">Email</span>
             </label>
@@ -94,7 +95,8 @@ const Login = () => {
             />
           </div>
 
-          <div className="form-control mb-3">
+          {/* Password */}
+          <div className="form-control mb-2">
             <label className="label">
               <span className="label-text">Password</span>
             </label>
@@ -106,43 +108,46 @@ const Login = () => {
             />
           </div>
 
-          {errorMessage && (
-            <p className="text-red-500 text-xs italic mb-2">{errorMessage}</p>
-          )}
+          {loginError && <p className="text-red-600 text-sm mt-2">{loginError}</p>}
 
           <div className="form-control mt-4">
-            <input
+            <button
               type="submit"
-              className="btn bg-orange-900 text-white"
-              value="Login"
-            />
+              className="btn bg-green text-white"
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
           </div>
 
           <p className="text-center my-2">
-            Don’t have an account?{" "}
+            Don’t have an account?
             <Link to="/signup" className="underline text-red ml-1">
               Signup Now
             </Link>
           </p>
         </form>
 
-        {/* Social Login Buttons */}
-        <div className="text-center mt-4 space-x-3">
+        {/* Social Login */}
+        <div className="text-center space-x-3 mt-3">
           <button
             onClick={() => handleSocialLogin("google")}
-            className="btn btn-circle hover:bg-orange-900 hover:text-white"
+            className="btn btn-circle hover:bg-green hover:text-white"
+            disabled={loading}
           >
             <FaGoogle />
           </button>
           <button
             onClick={() => handleSocialLogin("facebook")}
-            className="btn btn-circle hover:bg-orange-900 hover:text-white"
+            className="btn btn-circle hover:bg-green hover:text-white"
+            disabled={loading}
           >
             <FaFacebookF />
           </button>
           <button
             onClick={() => handleSocialLogin("github")}
-            className="btn btn-circle hover:bg-orange-900 hover:text-white"
+            className="btn btn-circle hover:bg-green hover:text-white"
+            disabled={loading}
           >
             <FaGithub />
           </button>
@@ -153,3 +158,4 @@ const Login = () => {
 };
 
 export default Login;
+
